@@ -1,0 +1,30 @@
+{
+  "name": "arthur-online-app",
+  "version": "1.0.0",
+  "description": "An example app for the Zapier platform.",
+  "repository": "zapier/arthur-online-app",
+  "homepage": "https://zapier.com/",
+  "author": "Dallas Huggins <dallas.huggins@lefthook.co>",
+  "license": "BSD-3-Clause",
+  "main": "index.js",
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha --recursive"
+  },
+  "engines": {
+    "node": "6.10.2",
+    "npm": ">=3.10.10"
+  },
+  "dependencies": {
+    "download-file": "^0.1.5",
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
+    "https": "^1.0.0",
+    "request": "^2.83.0",
+    "underscore": "^1.8.3",
+    "zapier-platform-core": "3.2.1"
+  },
+  "devDependencies": {
+    "mocha": "3.2.0",
+    "should": "11.2.1"
+  }
+}
