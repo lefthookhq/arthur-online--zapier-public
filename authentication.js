@@ -33,16 +33,16 @@ const getAccessToken = (z, bundle) => {
 };
 
 const refreshAccessToken = (z, bundle) => {
-  const promise = z.request(`${process.env.BASE_AUTH_URL}/oauth/token`, {
+  const promise = z.request('https://auth.arthuronline.co.uk/oauth/token', {
     method: 'POST',
-    body: {
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    }, 
+    form: {
       refresh_token: bundle.authData.refresh_token,
       client_id: process.env.CLIENT_ID,
       client_secret: process.env.CLIENT_SECRET,
       grant_type: 'refresh_token'
-    },
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded'
     }
   });
   // Needs to return `access_token`. If the refresh token stays constant, can skip it. If it changes, can
@@ -51,12 +51,14 @@ const refreshAccessToken = (z, bundle) => {
     z.console.log("Refresh Response", response);
     if (response.status !== 200) {
       throw new Error('Unable to fetch access token: ' + response.content);
+    } else {
+      var result = JSON.parse(response.content);
+      return {
+        access_token: result.access_token, 
+        refresh_token: result.refresh_token, 
+        'X-EntityID': bundle.inputData.xEntityId
+      };
     }
-
-    const result = JSON.parse(response.content);
-    return {
-      access_token: result.access_token
-    };
   });
 };
 
@@ -70,10 +72,15 @@ const testAuth = (z /*, bundle*/) => {
   // Raise an error to show
   return promise.then((response) => {
     z.console.log("Test:", response);
-    if (response.status !== 200) {
+    if (response.status === 200) {
+      return response;
+    } else if (response.status === 401 && JSON.parse(response.content).data.message && JSON.parse(response.content).data.message == "Bad credentials") {
       throw new Error(JSON.parse(response.content).data.message);
+    } else if (response.status === 401 && JSON.parse(response.content).error == "invalid_token") {
+      throw new z.errors.RefreshAuthError();
+    } else {
+      throw new Error(response);
     }
-    return response;
   });
 };
 
@@ -99,15 +106,16 @@ module.exports = {
     // this method to tell Zapier how to refresh it.
     refreshAccessToken: refreshAccessToken,
     // If you want Zapier to automatically invoke `refreshAccessToken` on a 401 response, set to true
-    autoRefresh: true
+    autoRefresh: false
     // If there is a specific scope you want to limit your Zapier app to, you can define it here.
     // Will get passed along to the authorizeUrl
     // scope: 'read,write'
   },
   fields: [
-    {label: 'Entity ID', key: 'xEntityId', type: 'string', required: true, helpText: 'In your Arthur Online account, in the footer you will see a comma-separated list of numbers. The first set of numbers is your entity id.'},
+    {label: 'Entity ID', key: 'xEntityId', type: 'string', required: true, helpText: 'Find the Entity ID at the top of the page in the Settings > [OAuth Applications](https://system.arthuronline.co.uk/zapier/clients/index) section of your Arthur Online account.'},
   ],
   // The test method allows Zapier to verify that the access token is valid. We'll execute this
   // method after the OAuth flow is complete to ensure everything is setup properly.
-  test: testAuth
+  test: testAuth, 
+  //connectionLabel: `Entity ID: {{bundle.authData.xEntityId}}`
 };

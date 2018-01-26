@@ -1,19 +1,19 @@
 var moment = require('moment');
-// New Tenancy Trigger
+// Updated Tenancy Trigger
 const subscribeHook = (z, bundle) => {
-  var event = 'tenancy-add';
+  var event = 'tenancy-updated-manual';
   const options = {
     url: `${process.env.BASE_URL}/webhooks/add.json`,
     method: 'POST',
     body: {
       target_url: bundle.targetUrl,
-      event: event 
+      event: event // for updated tenancies to return also 'tenancy-updated-manual', but currently cannot do both
     }
   };
-  z.console.log("New Tenancy Webhook Options:", options);
+  z.console.log("Updated Tenancy Webhook Options:", options);
   return z.request(options)
     .then(response => {
-      z.console.log("New Tenancy Webhook Response:", response);
+      z.console.log("Updated Tenancy Webhook Response:", response);
       var content = response.json;
       if (response.status !== 200 && response.status !== 201) {
         throw new Error("Webhook was not created. Error number: " + content);
@@ -182,7 +182,7 @@ const tenanciesList = (z, bundle) => {
           tenancy["Reference"] = object.ref || "";
           tenancy["Reference Status"] = object.reference_status || "";
           tenancy["Created"] = object.created_8601 || "";
-          tenancy["Event Name"] = "Tenancy added"; // placeholder
+          tenancy["Event Name"] = "Tenancy updated"; // placeholder
           array.push(tenancy);
         });
         z.console.log("tenanciesList Tenancies Data:", dataArray);
@@ -241,16 +241,16 @@ sampleObject["Contract Type ID"] = "";
 sampleObject["Reference"] = "";
 sampleObject["Reference Status"] = "";
 sampleObject["Created"] = "2018-01-01T16:03:34+00:00";
-sampleObject["Event Name"] = "Tenancy added"; // placeholder
+sampleObject["Event Name"] = "Tenancy updated"; // placeholder
 
 // Export 
 module.exports = {
-  key: 'new_tenancy',
+  key: 'updated_tenancy',
   noun: 'Tenancy',
 
   display: {
-    label: 'New Tenancy',
-    description: 'Triggers when a new tenancy is added.',
+    label: 'Updated Tenancy',
+    description: 'Triggers when a tenancy is updated.',
     important: true
   },
   operation: {

@@ -1,6 +1,6 @@
-// New Viewing
+// Updated Viewing
 const subscribeHook = (z, bundle) => {
-  var event = 'viewing-add-manager'; 
+  var event = 'viewing-updated-manager';
   const options = {
     url: `${process.env.BASE_URL}/webhooks/add.json`,
     method: 'POST',
@@ -9,10 +9,10 @@ const subscribeHook = (z, bundle) => {
       event: event // for viewings both added AND updated AND by anyone we need a new event that has more functionality, but currently cannot do both
     }
   };
-  z.console.log("New Viewing Webhook Options:", options);
+  z.console.log("Updated Viewing Webhook Options:", options);
   return z.request(options)
     .then(response => {
-      z.console.log("New Viewing Webhook Response:", response);
+      z.console.log("Updated Viewing Webhook Response:", response);
       var content = response.json;
       if (response.status !== 200 && response.status !== 201) {
         throw new Error ("Webhook was not created. Error number: " + content);
@@ -56,14 +56,14 @@ const viewingReturn = (z, bundle) => {
   viewing["Viewing Date"] = clean['data[viewing_date]'] || ""; 
   viewing["Viewing Time"] = clean['data[viewing_time]'] || ""; 
   viewing["Notes"] = clean['data[notes]'] || "";
-  viewing["Offer"] = clean['data[offer]'] || ""; 
+  viewing["Offer"] = clean['data[offer]'] || ""; //
   viewing["Offer Frequency"] = clean['data[offer_frequency]'] || ""; 
   //viewing["Company"] = clean['data[company]'] || ""; 
   viewing["Archived"] = clean['data[archived]'] || ""; 
   viewing["Unit Name"] = clean['data[unit.name]'] || ""; 
   viewing["Unit ID"] = clean['data[unit.id]'] || "";
   viewing["Unit Owner Name"] = clean['data[unit.owner_name]'] || ""; 
-  viewing['Unit Owner ID'] = clean['data[Unit.OwnerEntity.id]'] || "";
+  viewing['Unit Owner ID'] = clean['data[Unit.OwnerEntity.id]'] || ""; 
   viewing['Unit Vacant'] = clean['data[Unit.vacant]'] || "";
   viewing["Multiple Assign To Person Name"] = clean['data[multiple_assign_to_person_name]'] || ""; 
   //viewing["First Name"] = clean['data[first_name]'] || ""; 
@@ -75,7 +75,7 @@ const viewingReturn = (z, bundle) => {
   viewing["Viewing Source ID"] = clean['data[viewing_source_id]'] || "";
   viewing["Created"] = clean['data[created_8601]'] || "";
   viewing["Event Name"] = clean['event[name]'] || "";
-  z.console.log("New Viewing:", viewing);
+  z.console.log("Updated Viewing:", viewing);
   array.push(viewing);
   return array;
 };
@@ -91,7 +91,7 @@ const viewingsList = (z, bundle) => {
   .then(response => {
     z.console.log("viewingsList Response", response);
     var content = response.json;
-    const dataArray = content.data;
+    var dataArray = content.data;
     z.console.log("Data Array:", dataArray);
     var array = []; 
     // Loop through viewings
@@ -136,7 +136,7 @@ const viewingsList = (z, bundle) => {
         viewing["Employment"] = object.employment; 
         viewing["Viewing Source ID"] = object.viewing_source_id || ""; 
         viewing["Created"] = object.created_8601 || ""; 
-        viewing["Event Name"] = "Added Viewing by Property Manager";
+        viewing["Event Name"] = "Viewing updated by Property Manager";
         array.push(viewing);
       });
       z.console.log("viewingsList Viewings Data:", dataArray);
@@ -175,22 +175,22 @@ sampleObject["Multiple Assign To Person Name"] = "";
 //sampleObject["First Name"] = "First Name Sample"; 
 //sampleObject["Last Name"] = "Last Name Sample"; 
 sampleObject["UK Citizen"] = 0; 
-sampleObject["Contact Phone"] = "";
+sampleObject["Contact Phone"] = ""; 
 sampleObject["Contact Email"] = "test@sample.com"; 
 sampleObject["Employment"] = ""; 
 sampleObject["Viewing Source ID"] = ""; 
 sampleObject["Created"] = ""; 
-sampleObject["Event Name"] = "Added Viewing by Property Manager";
+sampleObject["Event Name"] = "Viewing updated by Property Manager";
 
 // Export 
 module.exports = {
-  key: 'new_viewing',
+  key: 'updated_viewing',
   noun: 'Viewing',
 
   display: {
-    label: 'New Viewing',
-    description: 'Triggers when a new viewing is added.', 
-    important: true
+    label: 'Updated Viewing',
+    description: 'Triggers when a viewing is updated.', 
+    important: false
   },
   operation: {
     type: 'hook',

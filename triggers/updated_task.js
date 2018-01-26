@@ -1,18 +1,18 @@
 var moment = require('moment');
-// New Task Trigger
+// Updated Task Trigger
 const subscribeHook = (z, bundle) => {
   const options = {
     url: `${process.env.BASE_URL}/webhooks/add.json`,
     method: 'POST',
     body: {
       target_url: bundle.targetUrl,
-      event: 'task-added' 
+      event: 'task-updated'
     }
   };
-  z.console.log("New Task Webhook Options:", options);
+  z.console.log("Updated Task Webhook Options:", options);
   return z.request(options)
     .then(response => {
-      z.console.log("New Task Webhook Response:", response);
+      z.console.log("Updated Task Webhook Response:", response);
       var content = response.json;
       if (response.status !== 200 && response.status !== 201) {
         throw new Error("Webhook was not created. Error number: " + content);
@@ -75,7 +75,7 @@ const taskReturn = (z, bundle) => {
   task["Created"] = clean['data[created_8601]'];
   task["Alert Message"] = clean['data[alert_message]'];
   task["Event Name"] = clean['event[name]'];
-  z.console.log("New Task:", task);
+  z.console.log("Updated Task:", task);
   array.push(task);
   return array;
 };
@@ -129,7 +129,7 @@ const tasksList = (z, bundle) => {
           task["Date Due"] = object.date_due || "";
           task["Created"] = object.created_8601 || "";
           task["Alert Message"] = object.alert_message || "";
-          task["Event Name"] = "Task added";
+          task["Event Name"] = "Task updated";
           array.push(task);
         });
         z.console.log("tasksList Tasks Data:", dataArray);
@@ -171,16 +171,16 @@ sampleObject["Occupant Can View"] = "";
 sampleObject["Date Due"] = "";
 sampleObject["Created"] = "2018-01-01T16:03:34+00:00";
 sampleObject["Alert Message"] = "";
-sampleObject["Event Name"] = "Task added";
+sampleObject["Event Name"] = "Task updated";
 
 // Export 
 module.exports = {
-  key: 'new_task',
+  key: 'updated_task',
   noun: 'Task',
 
   display: {
-    label: 'New Task',
-    description: 'Triggers when a new task is added.',
+    label: 'Updated Task',
+    description: 'Triggers when a task is updated.',
     important: false
   },
   operation: {

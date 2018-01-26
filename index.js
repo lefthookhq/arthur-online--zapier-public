@@ -1,14 +1,11 @@
-const TestrefreshCreate = require('./creates/test_refresh');
-const TestrefreshTrigger = require('./triggers/test_refresh');
 const DocumentTrigger = require('./triggers/new_document');
 const TasktypesResource = require('./resources/task_types');
-const AvailableunitsResource = require('./resources/available_units');
-const TasksResource = require('./resources/tasks');
-const TenantsResource = require('./resources/tenants');
-const ViewingsResource = require('./resources/viewings');
 const NewTaskTrigger = require('./triggers/new_task');
+const UpdatedTaskTrigger = require('./triggers/updated_task');
 const NewTenancyTrigger = require('./triggers/new_tenancy');
+const UpdatedTenancyTrigger = require('./triggers/updated_tenancy');
 const NewViewingTrigger = require('./triggers/new_viewing');
+const UpdatedViewingTrigger = require('./triggers/updated_viewing');
 const UnitAvailableTrigger = require('./triggers/unit_available');
 const authentication = require('./authentication');
 
@@ -19,9 +16,7 @@ const includeBearerToken = (request, z, bundle) => {
     z.console.log("Access Token", bundle.authData.access_token);
     request.headers.Authorization = `Bearer ${bundle.authData.access_token}`;
     request.headers['X-EntityId'] = bundle.authData.xEntityId;
-    request.headers['content-type'] = 'application/json';
     request.headers['cache-control'] = 'no-cache';
-    request.headers['Accept-Language'] = 'en-US,en;q=0.8';
   }
   return request;
 };
@@ -47,18 +42,17 @@ const App = {
   // If you want to define optional resources to simplify creation of triggers, searches, creates - do that here!
   resources: {
     [TasktypesResource.key]: TasktypesResource
-    /*[AvailableunitsResource.key]: AvailableunitsResource,
-    [TasksResource.key]: TasksResource,
-    [TenantsResource.key]: TenantsResource,
-    [ViewingsResource.key]: ViewingsResource*/
   },
 
   // If you want your trigger to show up, you better include it here!
   triggers: {
     [DocumentTrigger.trigger.key]: DocumentTrigger.trigger,
     [NewTaskTrigger.key]: NewTaskTrigger,
+    [UpdatedTaskTrigger.key]: UpdatedTaskTrigger,
+    [UpdatedTenancyTrigger.key]: UpdatedTenancyTrigger,
     [NewTenancyTrigger.key]: NewTenancyTrigger,
     [NewViewingTrigger.key]: NewViewingTrigger,
+    [UpdatedViewingTrigger.key]: UpdatedViewingTrigger,
     [UnitAvailableTrigger.key]: UnitAvailableTrigger
   },
 
@@ -68,7 +62,6 @@ const App = {
 
   // If you want your creates to show up, you better include it here!
   creates: {
-    [TestrefreshCreate.key]: TestrefreshCreate,
   }
 };
 

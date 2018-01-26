@@ -27,21 +27,6 @@ describe('My App', () => {
       .catch(done);
   });*/
 
-// Refresh test: 
-  it('should refresh', (done) => {
-    var bundle = {
-      
-    };
-    appTester(App.creates.test_refresh.operation.perform, bundle)
-      .then(results => {
-        console.log(results);
-        done();
-      }).catch((error) => {
-        error.should.be.empty();
-        done();
-      })
-      .catch(done);
-  });
 
 
 });
